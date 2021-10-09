@@ -19,8 +19,16 @@ namespace HangfireWithDotNet
                 HangfireAspNet.Use(GetHangfireServers);
 
                 // Let's also create a sample background job
-                var manager = new RecurringJobManager();
-                manager.AddOrUpdate("firstJob", Job.FromExpression(() => FireJob()), Cron.Minutely());
+                try
+                {
+                    var manager = new RecurringJobManager();
+                    manager.AddOrUpdate("firstJob", Job.FromExpression(() => FireJob()), Cron.Minutely());
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
             }
         }
         private IEnumerable<IDisposable> GetHangfireServers()
@@ -40,7 +48,7 @@ namespace HangfireWithDotNet
 
             yield return new BackgroundJobServer();
         }
-        private void FireJob()
+        public void FireJob()
         {
             using (DataClasses1DataContext eDataBase = new DataClasses1DataContext())
             {
